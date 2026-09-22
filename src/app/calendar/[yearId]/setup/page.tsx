@@ -1,0 +1,50 @@
+import Link from 'next/link'
+import { withAuth } from '@/lib/auth/withAuth'
+import { createServerClient } from '@/lib/supabase/server'
+import { getAcademicYear } from '@/lib/services/academicYear.service'
+import { listSemesters } from '@/lib/services/semester.service'
+import { listHolidayOccurrences } from '@/lib/services/holiday.service'
+import { listExamInstances } from '@/lib/services/exam.service'
+import { getStudentReturn } from '@/lib/services/studentReturn.service'
+import { SetupForm } from '@/components/calendar/SetupForm'
+import { ErrorState } from '@/components/calendar/ErrorState'
+
+interface Props {
+  params: Promise<{ yearId: string }>
+}
+
+export default async function SetupPage({ params }: Props) {
+  const { yearId } = await params
+  try {
+    const ctx = await withAuth()
+    const supabase = await createServerClient()
+    const [year, semesters, holidays, exams, studentReturn] = await Promise.all([
+      getAcademicYear(supabase, ctx, yearId),
+      listSemesters(supabase, ctx, yearId),
+      listHolidayOccurrences(supabase, ctx, yearId),
+      listExamInstances(supabase, ctx, yearId),
+      getStudentReturn(supabase, ctx, yearId),
+    ])
+
+    return (
+      <div className="mx-auto max-w-3xl space-y-4">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Set up {year.name}</h1>
+          <Link href={`/calendar/${yearId}`} className="text-sm text-primary underline underline-offset-4">
+            ← Back to year overview
+          </Link>
+        </div>
+        <SetupForm
+          yearId={yearId}
+          year={year}
+          semesters={semesters}
+          holidays={holidays}
+          exams={exams}
+          studentReturn={studentReturn}
+        />
+      </div>
+    )
+  } catch (error) {
+    return <ErrorState error={error} />
+  }
+}

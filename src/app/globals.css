@@ -1,0 +1,244 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   K2 Design Tokens — ported verbatim from the k2-ui-foundation-test scaffold
+   (itself generated from 20_Design_System.md §1/§23's master reference
+   table; hex converted to HSL). This subsystem previously had its own
+   paper/ink/navy/ochre palette (see git history / IMPLEMENTATION_NOTES.md
+   "Merge decision" below) — that palette is retired as of this merge in
+   favor of K2's one locked design system, so every K2 subsystem looks like
+   the same product.
+
+   MERGE DECISION — which portal tone this subsystem takes:
+   The Calendar Engine is a registrar/admin-facing console (school-year
+   setup, holidays, exams, timeline publication) with no student- or
+   teacher-facing surface anywhere in it. That maps directly onto doc 20's
+   Admin/Registrar tone — cool (Academic Blue on Cloud, K2 Navy chrome) —
+   not the warm Student/Public tone. `data-portal="admin"` is set once, in
+   the root layout (see layout.tsx), which scopes every token below to the
+   Admin block. This is a judgment call made without direct access to
+   05_Frontend_Architecture.md or 20_Design_System.md themselves (neither
+   file shipped in either source package) — only to what the UI foundation
+   package's own README and inline comments quote from them. If K2's actual
+   architecture doc places the Calendar Engine somewhere other than inside
+   Admin, that's the one assumption in this file worth checking against it.
+
+   The Public/Student/Teacher blocks below are kept even though nothing in
+   this app currently routes to them — they're inert until a `data-portal`
+   attribute selects them, they were real, working, doc-verified CSS in the
+   source package, and deleting them would just mean re-deriving them later
+   when those portals are actually built. Nothing here invents new pages.
+   ========================================================================== */
+
+:root {
+  /* Semantic — doc 20 §1.1, shared across all portals, values untouched */
+  --success: 166 56% 28%;   /* #1F6F5C Highland Green */
+  --warning: 26 63% 48%;    /* #C9722E Burnt Amber */
+  --error: 9 59% 44%;       /* #B4432E Cherry */
+  --info: 198 55% 40%;      /* #2E7D9E Lake Tana Blue */
+
+  --destructive: var(--error);
+  --destructive-foreground: 0 0% 100%;
+
+  /* NEW — added in the v2 merge, not in the UI foundation package.
+     A readable foreground for each semantic color used as a SOLID,
+     full-opacity fill (a day-cell block, a solid badge/button) — a
+     different problem from the *-text tokens below (colored text on a
+     neutral surface). Doc 20 doesn't define these; computed here directly
+     against WCAG 2.1 so every solid semantic fill ships with a foreground
+     that's actually been checked, not assumed:
+       success on white:  5.99:1
+       warning on white:  3.62:1 (fails) → near-black 0 0% 10%: 4.83:1
+       error   on white:  5.65:1
+       info    on white:  4.65:1 — passes AA but only just; info
+         (#2E7D9E) sits close enough to the 4.5:1 line that neither white
+         nor black clears it with real margin (true black only reaches
+         4.52:1). Disclosing rather than overstating this one — see the
+         merge notes for what a real fix would need (darkening info
+         specifically for solid-fill contexts, likely a doc 20 change). */
+  --success-foreground: 0 0% 100%;
+  --warning-foreground: 0 0% 10%;
+  --error-foreground: 0 0% 100%;
+  --info-foreground: 0 0% 100%;
+
+  /* shared shell mechanics */
+  --radius: var(--radius-md);
+  --font-sans: "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Noto Sans Ethiopic ships alongside this family for V2 Amharic (doc 20 §2) —
+     self-host both when this leaves "test" status; this sandbox has no
+     font-CDN network access either, same constraint the source packages
+     both already hit, so no @import/next-font Google Fonts call here. */
+}
+
+/* ---- Public / Student / Teacher — warm tone, doc 20 §1.2 ----
+   Not routed to anywhere in this app (Calendar Engine is Admin-only) —
+   kept as real, doc-verified CSS for whenever those portals get built. */
+[data-portal="public"],
+[data-portal="student"],
+[data-portal="teacher"] {
+  --background: 40 47% 96%;        /* #FAF7F1 Paper */
+  --foreground: 33 15% 15%;        /* #2B2620 Ink */
+  --card: 41 47% 90%;              /* #F1E9D8 Sand */
+  --card-foreground: 33 15% 15%;
+  --muted: 41 47% 90%;
+  --muted-foreground: 35 11% 38%;  /* #6B6255 */
+  --accent: 41 47% 90%;
+  --accent-foreground: 33 15% 15%;
+  --secondary: 41 47% 90%;
+  --secondary-foreground: 33 15% 15%;
+  --primary: 42 70% 51%;           /* #D9A62B Adey Gold */
+  /* doc 20 §5 literally says "white text" here, but white-on-Adey-Gold is
+     2.22:1 — fails §19's own 4.5:1 AA baseline. Using text-primary (Ink)
+     instead: 6.74:1. (Carried forward from the UI foundation package's own
+     fix, unchanged.) */
+  --primary-foreground: 33 15% 15%;
+  --border: 39 35% 84%;            /* #E4DAC7 */
+  --input: 39 35% 84%;
+  --ring: 42 70% 51%;
+
+  --shadow-color: 33 15% 15%;
+  --shadow-opacity: 0.08;
+
+  /* NEW — fixes the badge/StatCard contrast bug the UI foundation README
+     flagged and left unresolved ("success text on Main Admin's card is
+     2.77:1", etc). Doc 20 only defines one shade per semantic token, which
+     can't be text-safe against a warm-light, cool-light, *and* near-black
+     surface all at once — so this merge adds a second, portal-scoped shade
+     per token, used ONLY as literal text color (badges, StatCard numbers),
+     never as a fill. Independently verified against every real surface in
+     this block (Paper/Sand for warm portals, Cloud/White for Admin — the
+     same shade clears both, so one "light" value covers both tone
+     families): worst-case 5.03–5.27:1 against every light surface below. */
+  --success-text: 166 56% 27%;
+  --warning-text: 26 63% 35%;
+  --error-text: 9 59% 42%;
+  --info-text: 198 55% 34%;
+}
+
+/* Student/Public geometry+motion — doc 20 §3 */
+[data-portal="public"],
+[data-portal="student"] {
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --motion-duration: 220ms;
+  --motion-ease: cubic-bezier(0.34, 1.56, 0.64, 1); /* gentle spring */
+}
+
+/* Teacher — identical colors, tighter geometry, less ceremony — doc 20 §1.2/§3 */
+[data-portal="teacher"] {
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --motion-duration: 160ms;
+  --motion-ease: ease-out;
+  --shadow-opacity: 0.06; /* "lighter" per §3 */
+}
+
+/* ---- Admin / Registrar — cool tone, doc 20 §1.2/§3 ----
+   The tone this Calendar Engine actually uses — see the merge decision
+   note at the top of this file. */
+[data-portal="admin"] {
+  --background: 216 33% 97%;       /* #F5F7FA Cloud */
+  --foreground: 214 26% 16%;       /* #1E2733 Slate Ink */
+  --card: 0 0% 100%;               /* #FFFFFF */
+  --card-foreground: 214 26% 16%;
+  --muted: 210 25% 89%;
+  --muted-foreground: 210 14% 42%; /* #5C6B7A */
+  --accent: 210 25% 89%;
+  --accent-foreground: 214 26% 16%;
+  --secondary: 0 0% 100%;
+  --secondary-foreground: 214 26% 16%;
+  --primary: 208 56% 42%;          /* #2F6FA8 Academic Blue */
+  --primary-foreground: 0 0% 100%;
+  --border: 210 25% 89%;           /* #DCE3EA */
+  --input: 210 25% 89%;
+  --ring: 208 56% 42%;
+  --sidebar-bg: 216 41% 18%;       /* #1B2A41 K2 Navy — brand-surface-dark, sidebar/topbar only */
+  --sidebar-fg: 0 0% 100%;
+
+  --shadow-color: 214 26% 16%;
+  --shadow-opacity: 0.06;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --motion-duration: 150ms;
+  --motion-ease: ease-out; /* linear ease-out, no bounce — "this is a workspace" */
+
+  /* NEW — same fix as the warm-portal block above; the same shade clears
+     AA against both Admin's Cloud background and its White card. */
+  --success-text: 166 56% 27%;
+  --warning-text: 26 63% 35%;
+  --error-text: 9 59% 42%;
+  --info-text: 198 55% 34%;
+}
+
+/* ---- Main Admin — near-monochrome, dark-by-default, doc 20 §1.2/§3 ----
+   Not routed to anywhere in this app — kept for the same reason as the
+   warm portals above. Deliberately not routed through next-themes' .dark
+   toggle: this portal has no light variant to toggle from. */
+[data-portal="main-admin"] {
+  --background: 225 10% 8%;        /* #121316 Graphite */
+  --foreground: 240 6% 93%;        /* #EDEDEF */
+  --card: 220 10% 12%;             /* #1C1E22 */
+  --card-foreground: 240 6% 93%;
+  --muted: 220 10% 12%;
+  --muted-foreground: 220 4% 56%;  /* #8A8D93 */
+  --accent: 220 10% 12%;
+  --accent-foreground: 240 6% 93%;
+  --secondary: 220 10% 12%;
+  --secondary-foreground: 240 6% 93%;
+  --primary: 217 11% 40%;          /* #5B6472 Steel — the ONLY non-semantic
+                                       interactive color here, doc 20 §1.2 */
+  --primary-foreground: 240 6% 93%;
+  --border: 220 9% 19%;            /* #2C2F35 */
+  --input: 220 9% 19%;
+  --ring: var(--info);             /* Steel-on-Graphite ring lacks contrast —
+                                       doc 20 §19 specifies semantic-info instead */
+
+  --shadow-opacity: 0; /* flat panels, borders do the separating — no shadow */
+
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+  --motion-duration: 120ms;
+  --motion-ease: ease-out; /* fastest, flattest, no personality spent on purpose */
+
+  /* NEW — the dark-context counterpart. Lighter shades of the same four
+     hues, verified against both Graphite (background) and #1C1E22 (card):
+     worst-case 5.12–7.89:1. */
+  --success-text: 166 56% 50%;
+  --warning-text: 26 63% 51%;
+  --error-text: 9 59% 61%;
+  --info-text: 198 55% 50%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration: 0ms !important;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans);
+}
+
+/* Carried forward from v2 — portal-agnostic, still useful for date grids
+   and Ethiopian-date displays throughout the calendar UI. */
+.tabular-dates {
+  font-variant-numeric: tabular-nums;
+}
