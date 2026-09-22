@@ -52,7 +52,11 @@ export function Sidebar({
               </div>
             )}
             {group.items.map((item) => {
-              const Icon = ICONS[item.icon]
+              // Fallback (never hit at runtime, since item.icon is typed as
+              // keyof ICONS) only exists to satisfy noUncheckedIndexedAccess
+              // — without it this indexes as `LucideIcon | undefined`, which
+              // TS correctly refuses to use as a JSX element type.
+              const Icon = ICONS[item.icon] ?? CalendarDays
               const active = item.href === '/' ? pathname === '/' : pathname === item.href || pathname.startsWith(`${item.href}/`)
               return (
                 <Link
