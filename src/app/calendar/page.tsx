@@ -55,3 +55,4 @@ export default async function CalendarDashboardPage() {
     console.error('[CalendarDashboardPage] failed:', error)
     return <ErrorState error={error} />
   }
+}
