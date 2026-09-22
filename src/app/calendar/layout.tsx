@@ -1,4 +1,3 @@
-import { CalendarDays } from 'lucide-react'
 import { DashboardShell } from '@/components/layout/dashboard-shell'
 import { withAuth } from '@/lib/auth/withAuth'
 export const dynamic = 'force-dynamic'
@@ -10,7 +9,15 @@ const groups = [
     // Not padded out with placeholder items for modules this merge didn't
     // touch (Students, Teachers, etc. — those belong to K2 Main Admin's
     // real nav, doc 08 §5, which this subsystem doesn't own or reproduce).
-    items: [{ label: 'Academic Years', icon: CalendarDays, href: '/calendar' }],
+    //
+    // `icon` is a string key (resolved against the ICONS map in
+    // sidebar.tsx), not the icon component itself — this is a Server
+    // Component, and a component/function reference can't be passed
+    // across the server->client boundary into <Sidebar>, a Client
+    // Component. Passing the component directly here was the cause of
+    // the "Functions cannot be passed directly to Client Components"
+    // crash on /calendar.
+    items: [{ label: 'Academic Years', icon: 'CalendarDays' as const, href: '/calendar' }],
   },
 ]
 
