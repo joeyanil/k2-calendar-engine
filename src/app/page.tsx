@@ -7,8 +7,8 @@ export default function HomePage() {
       <p className="text-sm text-muted-foreground">
         This subsystem is normally reached from the K2 Main Admin Portal. For local development, jump straight in:
       </p>
-      <Link href="/calendar" className="text-sm font-medium text-primary underline underline-offset-4">
-        Open the Calendar console →
+      <Link href="/login" className="text-sm font-medium text-primary underline underline-offset-4">
+        Sign in →
       </Link>
     </main>
   )
