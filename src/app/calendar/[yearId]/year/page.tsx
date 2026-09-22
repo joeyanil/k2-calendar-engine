@@ -7,6 +7,7 @@ import { getTeachingDaySummary } from '@/lib/services/calendarTimeline.service'
 import { YearView } from '@/components/calendar/YearView'
 import { ErrorState } from '@/components/calendar/ErrorState'
 import { Panel } from '@/components/ui/panel'
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: Promise<{ yearId: string }>
