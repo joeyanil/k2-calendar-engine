@@ -27,7 +27,7 @@ export default async function CalendarLayout({ children }: { children: React.Rea
         {children}
       </DashboardShell>
     )
-  } catch {
+} catch (error) {
+    console.error('[CalendarLayout] withAuth() failed:', error)
     return <div className="min-h-screen bg-background px-8 py-6">{children}</div>
   }
-}
