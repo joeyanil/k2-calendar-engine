@@ -8,6 +8,7 @@ import { listExamInstances } from '@/lib/services/exam.service'
 import { getStudentReturn } from '@/lib/services/studentReturn.service'
 import { SetupForm } from '@/components/calendar/SetupForm'
 import { ErrorState } from '@/components/calendar/ErrorState'
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: Promise<{ yearId: string }>
