@@ -1,6 +1,7 @@
 import { CalendarDays } from 'lucide-react'
 import { DashboardShell } from '@/components/layout/dashboard-shell'
 import { withAuth } from '@/lib/auth/withAuth'
+export const dynamic = 'force-dynamic'
 
 const groups = [
   {
