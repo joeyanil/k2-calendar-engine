@@ -51,7 +51,7 @@ export default async function CalendarDashboardPage() {
         </Panel>
       </div>
     )
-  } catch (error) {
+} catch (error) {
+    console.error('[CalendarDashboardPage] failed:', error)
     return <ErrorState error={error} />
   }
-}
