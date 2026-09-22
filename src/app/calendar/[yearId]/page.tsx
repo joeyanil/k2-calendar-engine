@@ -9,6 +9,7 @@ import { ValidationPanel } from '@/components/calendar/ValidationPanel'
 import { ErrorState } from '@/components/calendar/ErrorState'
 import { RebuildTimelineButton } from '@/components/calendar/RebuildTimelineButton'
 import { formatEthiopian, hasBlockingErrors } from '@/lib/calendar'
+export const dynamic = 'force-dynamic'
 
 interface Props {
   params: Promise<{ yearId: string }>
