@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '../ui/button'
 import { Panel } from '../ui/panel'
+import { EthiopianDateField } from './EthiopianDateField'
 import { MOVABLE_HOLIDAY_KEYS, STANDARD_EXAM_KEYS, GRADE12_EXAM_KEY } from '@/lib/calendar'
 import type { AcademicYear, Semester, HolidayOccurrence, ExamInstance, StudentReturnDay } from '@/lib/calendar'
 
@@ -61,8 +62,8 @@ export function SetupForm({ yearId, year, semesters, holidays, exams, studentRet
             )
           }}
         >
-          <Field label="Start date" name="startDate" type="date" defaultValue={year.startDate} />
-          <Field label="End date" name="endDate" type="date" defaultValue={year.endDate} />
+          <EthiopianDateField label="Start date" name="startDate" ethiopianYear={year.yearEc} defaultValue={year.startDate} />
+          <EthiopianDateField label="End date" name="endDate" ethiopianYear={year.yearEc} defaultValue={year.endDate} />
           <Button type="submit" level="secondary">
             Save boundary
           </Button>
@@ -90,8 +91,8 @@ export function SetupForm({ yearId, year, semesters, holidays, exams, studentRet
                 }}
               >
                 <span className="w-20 text-sm font-medium text-foreground">Semester {order}</span>
-                <Field label="Start date" name="startDate" type="date" defaultValue={sem?.startDate ?? ''} />
-                <Field label="End date" name="endDate" type="date" defaultValue={sem?.endDate ?? ''} />
+                <EthiopianDateField label="Start date" name="startDate" ethiopianYear={year.yearEc} defaultValue={sem?.startDate ?? ''} />
+                <EthiopianDateField label="End date" name="endDate" ethiopianYear={year.yearEc} defaultValue={sem?.endDate ?? ''} />
                 <Button type="submit" level="secondary">
                   Save
                 </Button>
@@ -150,7 +151,7 @@ export function SetupForm({ yearId, year, semesters, holidays, exams, studentRet
                   }}
                 >
                   <span className="w-24 text-sm">{key}</span>
-                  <Field label="Date" name="date" type="date" defaultValue={existing?.date ?? ''} />
+                  <EthiopianDateField label="Date" name="date" ethiopianYear={year.yearEc} defaultValue={existing?.date ?? ''} />
                   <Button type="submit" level="secondary">
                     Save
                   </Button>
@@ -183,8 +184,8 @@ export function SetupForm({ yearId, year, semesters, holidays, exams, studentRet
                 }}
               >
                 <span className="w-40 text-sm">{key}</span>
-                <Field label="Start" name="startDate" type="date" defaultValue={existing?.startDate ?? ''} />
-                <Field label="End" name="endDate" type="date" defaultValue={existing?.endDate ?? ''} />
+                <EthiopianDateField label="Start" name="startDate" ethiopianYear={year.yearEc} defaultValue={existing?.startDate ?? ''} />
+                <EthiopianDateField label="End" name="endDate" ethiopianYear={year.yearEc} defaultValue={existing?.endDate ?? ''} />
                 <Button type="submit" level="secondary">
                   Save
                 </Button>
@@ -206,7 +207,7 @@ export function SetupForm({ yearId, year, semesters, holidays, exams, studentRet
             )
           }}
         >
-          <Field label="Date" name="date" type="date" defaultValue={studentReturn?.date ?? ''} />
+          <EthiopianDateField label="Date" name="date" ethiopianYear={year.yearEc} defaultValue={studentReturn?.date ?? ''} />
           <Button type="submit" level="secondary">
             Save
           </Button>
@@ -214,30 +215,6 @@ export function SetupForm({ yearId, year, semesters, holidays, exams, studentRet
         </form>
       </Panel>
     </div>
-  )
-}
-
-function Field({
-  label,
-  name,
-  type,
-  defaultValue,
-}: {
-  label: string
-  name: string
-  type: string
-  defaultValue: string
-}) {
-  return (
-    <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-      {label}
-      <input
-        name={name}
-        type={type}
-        defaultValue={defaultValue}
-        className="rounded-md border border-input bg-background px-2 py-1.5 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      />
-    </label>
   )
 }
 
