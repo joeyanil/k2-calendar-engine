@@ -1,19 +1,11 @@
 'use client'
 
-import { CalendarDays, type LucideIcon } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
-// Icons can't be passed from a Server Component (calendar/layout.tsx) as
-// component references — React can't serialize a function/component across
-// the server->client boundary. So NavItem.icon is a string key into this
-// map, resolved here on the client, instead of a LucideIcon value itself.
-const ICONS: Record<string, LucideIcon> = {
-  CalendarDays,
-}
-
-export type NavItem = { label: string; icon: keyof typeof ICONS; href: string }
+export type NavItem = { label: string; icon: LucideIcon; href: string }
 export type NavGroup = { label?: string; items: NavItem[] }
 
 // doc 20 §9: Admin's sidebar/topbar use brand-surface-dark (K2 Navy) while
@@ -52,11 +44,7 @@ export function Sidebar({
               </div>
             )}
             {group.items.map((item) => {
-              // Fallback (never hit at runtime, since item.icon is typed as
-              // keyof ICONS) only exists to satisfy noUncheckedIndexedAccess
-              // — without it this indexes as `LucideIcon | undefined`, which
-              // TS correctly refuses to use as a JSX element type.
-              const Icon = ICONS[item.icon] ?? CalendarDays
+              const Icon = item.icon
               const active = item.href === '/' ? pathname === '/' : pathname === item.href || pathname.startsWith(`${item.href}/`)
               return (
                 <Link
