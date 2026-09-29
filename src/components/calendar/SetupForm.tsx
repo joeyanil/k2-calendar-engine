@@ -162,6 +162,45 @@ function ProposeFixedHolidays({ yearId }: { yearId: string }) {
   )
 }
 
+/**
+ * Row for one of the 5 fixed holidays: date is always system-proposed
+ * (never typed by an admin — see proposeFixedHolidayOccurrences), but until
+ * now there was no way to actually *confirm* it. The backend's confirm
+ * endpoint (fix #17) already existed for exactly this; this wires it up.
+ * "Suggest, then one click to accept" — the fixed-holiday equivalent of
+ * the movable-holiday form next to it, minus any date typing, since there's
+ * nothing here for an admin to type: the date is deterministic every year.
+ */
+function FixedHolidayRow({ yearId, holiday }: { yearId: string; holiday: HolidayOccurrence }) {
+  const { status, save } = useSectionSave()
+  const confirmed = Boolean(holiday.confirmedAt)
+
+  return (
+    <li className="flex flex-wrap items-center justify-between gap-2 py-1.5">
+      <span className="text-sm">{holiday.holidayTypeKey}</span>
+      <span className="tabular-dates text-sm text-muted-foreground">
+        {holiday.date} · {holiday.closesSchool ? 'closes school' : 'does not close school'}
+      </span>
+      {confirmed ? (
+        <span className="text-xs text-success-text">✓ Confirmed</span>
+      ) : (
+        <div className="flex items-center gap-2">
+          <Button
+            level="primary"
+            size="sm"
+            loading={status === 'saving'}
+            loadingText="Confirming…"
+            onClick={() => void save(() => post(`/api/v1/academic-years/${yearId}/holidays/${holiday.holidayTypeKey}/confirm`, 'POST', {}))}
+          >
+            Confirm
+          </Button>
+          {status !== 'idle' && status !== 'saving' && status !== 'saved' && <span className="text-xs text-error-text">{status}</span>}
+        </div>
+      )}
+    </li>
+  )
+}
+
 function MovableHolidayForm({
   yearId,
   holidayKey,
@@ -269,16 +308,11 @@ export function SetupForm({ yearId, year, semesters, holidays, exams, studentRet
         <div className="space-y-4">
           <ProposeFixedHolidays yearId={yearId} />
 
-          <ul className="divide-y divide-border text-sm">
+          <ul className="divide-y divide-border">
             {holidays
               .filter((h) => h.source === 'AUTO_PROPOSED')
               .map((h) => (
-                <li key={h.holidayTypeKey} className="flex items-center justify-between py-1.5">
-                  <span>{h.holidayTypeKey}</span>
-                  <span className="tabular-dates text-muted-foreground">
-                    {h.date} · {h.closesSchool ? 'closes school' : 'does not close school'}
-                  </span>
-                </li>
+                <FixedHolidayRow key={h.holidayTypeKey} yearId={yearId} holiday={h} />
               ))}
           </ul>
 
